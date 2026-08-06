@@ -1,0 +1,6 @@
+{"level":30,"time":1785999398335,"pid":28209,"hostname":"localhost","msg":"Server listening at http://127.0.0.1:3012"}
+LISTENING at http://127.0.0.1:3012
+{"level":30,"time":1785999398337,"pid":28209,"hostname":"localhost","msg":"Server listening at http://10.1.10.1:3012"}
+{"level":30,"time":1785999398337,"pid":28209,"hostname":"localhost","msg":"Server listening at http://10.237.251.159:3012"}
+{"level":30,"time":1785999398865,"pid":28209,"hostname":"localhost","reqId":"req-1","req":{"method":"GET","url":"/healthz","host":"localhost:3012","remoteAddress":"127.0.0.1","remotePort":41842},"msg":"incoming request"}
+{"level":30,"time":1785999398941,"pid":28209,"hostname":"localhost","reqId":"req-1","res":{"statusCode":200},"responseTime":73.98005999999987,"msg":"request completed"}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#4f46e5" />
+  <meta name="description" content="School study platform — chapters, MCQs, Q&A, AI help, and class chat." />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="stylesheet" href="/style.css" />
+  <title>StudyHub</title>
+</head>
+<body>
+  <!-- ─────────────── LOGIN ─────────────── -->
+  <section id="view-login" class="view view-login is-active">
+    <div class="login-card">
+      <div class="brand">
+        <div class="brand-mark">📚</div>
+        <h1>StudyHub</h1>
+        <p class="brand-sub">Your class, your chapters, your AI study buddy.</p>
+      </div>
+      <form id="login-form" autocomplete="off">
+        <label class="field">
+          <span>Your name</span>
+          <input id="login-name" type="text" name="name" placeholder="e.g. Ayesha Khan" required maxlength="60" autocomplete="name" />
+        </label>
+        <label class="field">
+          <span>Class code</span>
+          <input id="login-code" type="text" name="code" placeholder="Ask your teacher" required maxlength="40" inputmode="text" />
+        </label>
+        <button type="submit" class="btn btn-primary btn-block" id="login-submit">Enter class</button>
+        <p class="form-error" id="login-error" role="alert"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ─────────────── APP SHELL ─────────────── -->
+  <div id="app-shell" class="app-shell" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="back-btn" hidden aria-label="Back">‹</button>
+      <h2 class="topbar-title" id="topbar-title">Subjects</h2>
+      <button class="icon-btn" id="logout-btn" aria-label="Log out" title="Log out">⏻</button>
+    </header>
+
+    <main class="content" id="content">
+      <!-- ── BROWSE (tree drill-down) ── -->
+      <section id="view-browse" class="view is-active">
+        <div id="crumb" class="crumb" hidden></div>
+        <div id="node-list" class="node-list"></div>
+        <div id="browse-empty" class="empty" hidden>
+          <div class="empty-emoji">🗂️</div>
+          <p>Nothing here yet. Your teacher will add materials soon.</p>
+        </div>
+      </section>
+
+      <!-- ── CHAPTER (MCQ / QA tabs) ── -->
+      <section id="view-chapter" class="view">
+        <div class="tabs" role="tablist">
+          <button class="tab is-active" data-tab="mcq" role="tab">MCQs</button>
+          <button class="tab" data-tab="qa" role="tab">Q &amp; A</button>
+        </div>
+        <div id="asset-list" class="asset-list"></div>
+        <div id="chapter-empty" class="empty" hidden>
+          <div class="empty-emoji">📭</div>
+          <p id="chapter-empty-text">No files in this tab yet.</p>
+        </div>
+      </section>
+
+      <!-- ── COMMUNITY CHAT ── -->
+      <section id="view-chat" class="view view-chat">
+        <div id="chat-scroll" class="chat-scroll">
+          <div id="chat-loadmore" class="chat-loadmore" hidden><button class="btn btn-ghost btn-sm">Load earlier messages</button></div>
+          <div id="chat-messages" class="chat-messages"></div>
+        </div>
+        <form id="chat-form" class="chat-composer">
+          <input id="chat-input" type="text" placeholder="Message your class…" maxlength="1000" autocomplete="off" />
+          <button type="submit" class="btn btn-primary btn-round" aria-label="Send">➤</button>
+        </form>
+      </section>
+    </main>
+
+    <!-- ── BOTTOM NAV ── -->
+    <nav class="tabbar" id="tabbar">
+      <button class="tabbar-btn is-active" data-nav="browse">
+        <span class="tabbar-ico">🏠</span><span>Subjects</span>
+      </button>
+      <button class="tabbar-btn" data-nav="chat">
+        <span class="tabbar-ico">💬</span><span>Class chat</span>
+      </button>
+      <button class="tabbar-btn" data-nav="admin" id="nav-admin" hidden>
+        <span class="tabbar-ico">📊</span><span>Dashboard</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ─────────────── VIEWER OVERLAY (PDF/image + AI) ─────────────── -->
+  <div id="viewer" class="viewer" hidden>
+    <header class="viewer-bar">
+      <button class="icon-btn" id="viewer-close" aria-label="Close">✕</button>
+      <h3 class="viewer-title" id="viewer-title">Document</h3>
+      <button class="icon-btn" id="viewer-ai-toggle" aria-label="Ask AI" title="Ask AI">🤖</button>
+    </header>
+    <div class="viewer-body">
+      <div id="pdf-container" class="pdf-container"></div>
+      <img id="image-view" class="image-view" hidden alt="Study material" />
+      <div id="viewer-loading" class="viewer-loading">Loading…</div>
+    </div>
+
+    <!-- AI panel slides up -->
+    <div id="ai-panel" class="ai-panel" hidden>
+      <div class="ai-head">
+        <span>🤖 Ask about this file</span>
+        <button class="icon-btn" id="ai-close" aria-label="Hide">▾</button>
+      </div>
+      <div id="ai-messages" class="ai-messages"></div>
+      <form id="ai-form" class="ai-composer">
+        <input id="ai-input" type="text" placeholder="Ask a question…" maxlength="500" autocomplete="off" />
+        <button type="submit" class="btn btn-primary btn-round" id="ai-send" aria-label="Ask">➤</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <!-- Socket.IO client is served by the server -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- PDF.js (UMD build exposes window.pdfjsLib) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

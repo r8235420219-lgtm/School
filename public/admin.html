@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#4f46e5" />
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/style.css" />
+  <title>Dashboard — StudyHub</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a href="/" class="icon-btn" aria-label="Back to app">‹</a>
+      <h2 class="topbar-title">Teacher Dashboard</h2>
+      <button class="icon-btn" id="logout-btn" aria-label="Log out" title="Log out">⏻</button>
+    </header>
+
+    <main class="content" id="content" style="padding-bottom: 70px;">
+      <!-- Period toggle -->
+      <div class="tabs" style="margin-bottom: 20px;">
+        <button class="tab is-active" data-period="day">Daily</button>
+        <button class="tab" data-period="week">Weekly</button>
+        <button class="tab" data-period="month">Monthly</button>
+      </div>
+
+      <!-- Chart canvas -->
+      <div style="background: var(--surface); border-radius: var(--radius); padding: 16px; margin-bottom: 20px; border: 1px solid var(--border);">
+        <canvas id="chart" style="max-height: 280px;"></canvas>
+      </div>
+
+      <!-- Per-student table -->
+      <div style="background: var(--surface); border-radius: var(--radius); padding: 16px; border: 1px solid var(--border);">
+        <h3 style="margin: 0 0 14px; font-size: 17px; font-weight: 700;">Students</h3>
+        <div id="student-table"></div>
+        <div id="table-empty" class="empty" hidden>
+          <div class="empty-emoji">👥</div>
+          <p>No students have logged in yet.</p>
+        </div>
+      </div>
+    </main>
+
+    <nav class="tabbar">
+      <a href="/" class="tabbar-btn">
+        <span class="tabbar-ico">🏠</span><span>Subjects</span>
+      </a>
+      <a href="/" class="tabbar-btn">
+        <span class="tabbar-ico">💬</span><span>Class chat</span>
+      </a>
+      <button class="tabbar-btn is-active">
+        <span class="tabbar-ico">📊</span><span>Dashboard</span>
+      </button>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script type="module" src="/admin.js"></script>
+</body>
+</html>

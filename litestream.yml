@@ -1,0 +1,17 @@
+# Litestream configuration — continuous SQLite replication to Cloudflare R2.
+# This keeps the DB safe even on free-tier ephemeral disks (Render/Railway).
+
+dbs:
+  - path: ./data/app.sqlite
+    replicas:
+      - type: s3
+        bucket: ${LITESTREAM_R2_BUCKET}
+        path: app.sqlite
+        endpoint: https://${LITESTREAM_R2_ACCOUNT_ID}.r2.cloudflarestorage.com
+        region: auto
+        access-key-id: ${LITESTREAM_R2_ACCESS_KEY_ID}
+        secret-access-key: ${LITESTREAM_R2_SECRET_ACCESS_KEY}
+        # Snapshot every 10 minutes, retain 7 days of snapshots.
+        sync-interval: 10m
+        snapshot-interval: 1h
+        retention: 168h

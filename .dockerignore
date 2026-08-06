@@ -1,0 +1,15 @@
+# Ignore everything not needed in the Docker image
+node_modules/
+dist/
+.env
+.env.local
+data/
+storage/
+*.log
+.git/
+.github/
+.vscode/
+.DS_Store
+*.md
+!package.json
+!package-lock.json
