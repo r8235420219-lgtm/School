@@ -30,12 +30,13 @@ interface SessionData {
 
 type BotContext = Context & SessionFlavor<SessionData>;
 
-if (!config.telegramBotToken) {
-  console.error('[bot] TELEGRAM_BOT_TOKEN not set. Exiting.');
-  process.exit(1);
-}
-
-const bot = new Bot<BotContext>(config.telegramBotToken);
+// The web server imports this module and calls startBot() after it is listening
+// (single-process deploy — Render's free tier runs one process; a separate bot
+// worker would be a paid service). So we must NOT exit or throw at import time.
+// Construct with a harmless placeholder when the token is absent; startBot()
+// refuses to begin polling without a real token, so the placeholder never makes
+// a network call.
+const bot = new Bot<BotContext>(config.telegramBotToken || 'disabled:disabled');
 
 // Access control:
 //  • If ADMIN_TELEGRAM_IDS is set, only those user IDs may use the bot (locked).
@@ -203,8 +204,18 @@ bot.catch((err) => {
   console.error('[bot] error:', err.error);
 });
 
-bot.start();
-console.log('[bot] Telegram bot started. Waiting for teacher uploads...');
+// Called by the web server after it is listening. Starts long polling only when
+// a real token is configured; otherwise logs and no-ops so the web app still runs.
+export function startBot(): void {
+  if (!config.telegramBotToken) {
+    console.warn('[bot] TELEGRAM_BOT_TOKEN not set — Telegram bot disabled. Web app runs normally.');
+    return;
+  }
+  // Do not await: bot.start() resolves only when polling stops.
+  bot.start({
+    onStart: (info) => console.log(`[bot] Telegram bot started as @${info.username}. Waiting for teacher uploads...`),
+  });
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers

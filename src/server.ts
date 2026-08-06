@@ -12,6 +12,7 @@ import { registerAiRoutes } from './routes/ai.js';
 import { registerAdminRoutes } from './routes/admin.js';
 import { attachRealtime } from './realtime.js';
 import { resolveModels, getModels } from './groq.js';
+import { startBot } from '../bot/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicDir = join(__dirname, '..', 'public');
@@ -47,6 +48,10 @@ async function main() {
 
   // Attach Socket.IO to Fastify's underlying HTTP server.
   attachRealtime(app.server);
+
+  // Start the Telegram bot in the SAME process (single-process deploy).
+  // Safe no-op if TELEGRAM_BOT_TOKEN is unset.
+  startBot();
 
   // Resolve Groq models in the background (non-blocking).
   resolveModels().catch(() => {});

@@ -7,12 +7,10 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "concurrently -n web,bot -c blue,magenta \"npm:dev:web\" \"npm:dev:bot\"",
-    "dev:web": "node --import tsx --watch src/server.ts",
-    "dev:bot": "node --import tsx bot/index.ts",
+    "dev": "node --import tsx --watch src/server.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "build": "tsc -p tsconfig.json --noEmit",
-    "start": "concurrently -n web,bot -c blue,magenta \"node --import tsx src/server.ts\" \"node --import tsx bot/index.ts\""
+    "start": "node --import tsx src/server.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
